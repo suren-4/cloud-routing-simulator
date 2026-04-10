@@ -1,0 +1,42 @@
+.chart-card {
+  padding: var(--space-md) !important;
+}
+
+.chart-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.chart-icon {
+  font-size: 1rem;
+}
+
+.chart-wrapper {
+  width: 100%;
+}
+
+.chart-tooltip {
+  background: rgba(10, 14, 26, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+}
+
+.chart-tooltip-label {
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.recharts-legend-item-text {
+  color: var(--text-secondary) !important;
+  font-size: 0.7rem !important;
+}

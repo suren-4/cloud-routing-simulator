@@ -1,0 +1,101 @@
+name: CD - Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository }}
+
+jobs:
+  # --- Build and Push Docker Images ---
+  build-push:
+    name: Build & Push Images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate version
+        id: version
+        run: echo "version=$(git rev-parse --short HEAD)-$(date +%Y%m%d)" >> $GITHUB_OUTPUT
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build & Push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-backend:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-backend:${{ steps.version.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build & Push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-frontend:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-frontend:${{ steps.version.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # --- Deploy ---
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build-push
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy with zero downtime
+        run: |
+          echo "🚀 Deploying version ${{ needs.build-push.outputs.version }}"
+          echo "Performing rolling update..."
+          # In a real setup, this would:
+          # 1. kubectl set image deployment/backend backend=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-backend:${{ needs.build-push.outputs.version }}
+          # 2. kubectl rollout status deployment/backend
+          # 3. kubectl set image deployment/frontend frontend=${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-frontend:${{ needs.build-push.outputs.version }}
+          # 4. kubectl rollout status deployment/frontend
+
+      - name: Health check
+        run: |
+          echo "Running post-deploy health checks..."
+          # curl -sf https://your-domain.com/health || exit 1
+
+      - name: Notify success
+        if: success()
+        run: echo "✅ Deployment successful! Version ${{ needs.build-push.outputs.version }}"
+
+  # --- Rollback ---
+  rollback:
+    name: Rollback (Manual)
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: deploy
+    steps:
+      - name: Rollback to previous version
+        run: |
+          echo "⚠️ Rolling back..."
+          # kubectl rollout undo deployment/backend
+          # kubectl rollout undo deployment/frontend
+          echo "🔄 Rollback complete"

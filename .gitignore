@@ -1,0 +1,23 @@
+# Environments
+venv/
+env/
+.env
+.venv
+
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build outputs
+frontend/dist/
+dist/
+build/
+__pycache__/
+*.pyc
+
+# IDEs and OS files
+.vscode/
+.idea/
+.DS_Store
+*.swp

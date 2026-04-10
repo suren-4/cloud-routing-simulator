@@ -1,0 +1,185 @@
+/* ===== APP LAYOUT ===== */
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--gradient-dark);
+}
+
+/* --- Header --- */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-xl);
+  background: rgba(10, 14, 26, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.brand-icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.4));
+}
+
+.brand-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.brand-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.header-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-tertiary);
+  padding: 3px;
+  border-radius: var(--radius-md);
+}
+
+/* --- Body --- */
+.app-body {
+  display: flex;
+  flex: 1;
+  gap: 0;
+}
+
+/* --- Sidebar --- */
+.app-sidebar {
+  width: 300px;
+  min-width: 300px;
+  padding: var(--space-md);
+  border-right: 1px solid var(--glass-border);
+  background: rgba(10, 14, 26, 0.5);
+  overflow-y: auto;
+  max-height: calc(100vh - 64px);
+}
+
+/* --- Main --- */
+.app-main {
+  flex: 1;
+  padding: var(--space-md);
+  overflow-y: auto;
+  max-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* --- Map Section --- */
+.map-section {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+/* --- Stats Row --- */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+}
+
+.stats-row .stat-card {
+  text-align: center;
+  padding: var(--space-md);
+}
+
+.stats-row .stat-value {
+  font-size: 1.75rem;
+}
+
+/* --- Charts Row --- */
+.charts-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-md);
+}
+
+/* --- Comparison --- */
+.comparison-section {
+  width: 100%;
+}
+
+/* --- Background Decoration --- */
+.app-layout::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    ellipse at 20% 50%,
+    rgba(0, 212, 255, 0.03) 0%,
+    transparent 50%
+  ),
+  radial-gradient(
+    ellipse at 80% 20%,
+    rgba(168, 85, 247, 0.03) 0%,
+    transparent 50%
+  ),
+  radial-gradient(
+    ellipse at 50% 80%,
+    rgba(0, 255, 136, 0.02) 0%,
+    transparent 50%
+  );
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* --- Responsive --- */
+@media (max-width: 1024px) {
+  .app-body {
+    flex-direction: column;
+  }
+  .app-sidebar {
+    width: 100%;
+    min-width: unset;
+    max-height: unset;
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .app-main {
+    max-height: unset;
+  }
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .charts-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+  }
+  .stats-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .brand-title {
+    font-size: 1rem;
+  }
+}
