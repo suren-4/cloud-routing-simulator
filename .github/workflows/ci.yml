@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_PREFIX: ${{ github.repository }}
+  IMAGE_PREFIX: poorvisara1220/devopssimulation
 
 jobs:
   # --- Backend Tests ---
