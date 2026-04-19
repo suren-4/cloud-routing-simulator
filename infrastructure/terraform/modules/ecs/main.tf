@@ -37,6 +37,13 @@ resource "aws_security_group" "ecs" {
     cidr_blocks = [data.aws_vpc.selected.cidr_block]
   }
 
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [data.aws_vpc.selected.cidr_block]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -88,6 +95,20 @@ resource "aws_ecs_task_definition" "backend" {
           "awslogs-stream-prefix" = "ecs"
         }
       }
+    },
+    {
+      name  = "frontend"
+      image = var.frontend_image
+      essential = true
+      portMappings = [{ containerPort = 80, protocol = "tcp" }]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = "/ecs/${var.project_name}-backend"
+          "awslogs-region"        = data.aws_region.current.name
+          "awslogs-stream-prefix" = "ecs-front"
+        }
+      }
     }
   ])
 }
@@ -106,8 +127,8 @@ resource "aws_ecs_service" "backend" {
 
   load_balancer {
     target_group_arn = var.alb_target_group
-    container_name   = "backend"
-    container_port   = 8000
+    container_name   = "frontend"
+    container_port   = 80
   }
 
   deployment_circuit_breaker {
