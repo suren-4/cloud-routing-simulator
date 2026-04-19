@@ -17,3 +17,8 @@ output "vpc_id" {
   description = "VPC ID"
   value       = module.vpc.vpc_id
 }
+
+output "vpn_public_ip" {
+  description = "OpenVPN Server Public IP (Connect via browser on port 8080 to grab client.ovpn)"
+  value       = module.vpn.vpn_public_ip
+}

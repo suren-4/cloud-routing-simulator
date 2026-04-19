@@ -1,0 +1,60 @@
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  owners = ["099720109477"] # Canonical
+}
+
+resource "aws_security_group" "vpn" {
+  name        = "${var.project_name}-vpn-sg"
+  description = "OpenVPN Security Group"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 1194
+    to_port     = 1194
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "vpn" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+  subnet_id     = var.subnet_id
+  vpc_security_group_ids = [aws_security_group.vpn.id]
+
+  user_data = <<-EOF
+              #!/bin/bash
+              apt-get update
+              curl -O https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh
+              chmod +x openvpn-install.sh
+              export AUTO_INSTALL=y
+              export ENDPOINT=$(curl -s http://checkip.amazonaws.com)
+              ./openvpn-install.sh
+              cd /root
+              python3 -m http.server 8080 &
+              EOF
+
+  tags = {
+    Name = "${var.project_name}-vpn"
+  }
+}
