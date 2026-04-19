@@ -21,6 +21,30 @@ data "aws_iam_policy_document" "ecs_tasks_trust" {
   }
 }
 
+data "aws_vpc" "selected" {
+  id = var.vpc_id
+}
+
+resource "aws_security_group" "ecs" {
+  name        = "${var.project_name}-ecs-sg"
+  description = "Allow inbound from VPC"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 8000
+    to_port     = 8000
+    protocol    = "tcp"
+    cidr_blocks = [data.aws_vpc.selected.cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_iam_role" "ecs_execution_role" {
   name               = "${var.project_name}-ecs-exec-role"
   assume_role_policy = data.aws_iam_policy_document.ecs_tasks_trust.json
@@ -77,7 +101,7 @@ resource "aws_ecs_service" "backend" {
 
   network_configuration {
     subnets         = var.subnet_ids
-    security_groups = []
+    security_groups = [aws_security_group.ecs.id]
   }
 
   load_balancer {
