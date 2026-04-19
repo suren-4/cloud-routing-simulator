@@ -44,13 +44,23 @@ resource "aws_instance" "vpn" {
 
   user_data = <<-EOF
               #!/bin/bash
-              apt-get update
+              export DEBIAN_FRONTEND=noninteractive
+              cd /home/ubuntu
+              
+              apt-get update -y
+              apt-get install -y iptables-persistent python3
+
               curl -O https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh
               chmod +x openvpn-install.sh
+              
               export AUTO_INSTALL=y
               export ENDPOINT=$(curl -s http://checkip.amazonaws.com)
               ./openvpn-install.sh
-              cd /root
+              
+              # Provide open permissions so the web server can read it
+              chmod 777 /home/ubuntu/*.ovpn
+              
+              # Start web server in the same directory
               python3 -m http.server 8080 &
               EOF
 
