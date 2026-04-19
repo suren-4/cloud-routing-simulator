@@ -19,13 +19,13 @@ variable "vpc_cidr" {
 variable "backend_image" {
   description = "Backend Docker image URI"
   type        = string
-  default     = "ghcr.io/user/cloud-routing-simulator-backend:latest"
+  default     = "ghcr.io/suren-4/cloud-routing-simulator-backend:latest"
 }
 
 variable "frontend_image" {
   description = "Frontend Docker image URI"
   type        = string
-  default     = "ghcr.io/user/cloud-routing-simulator-frontend:latest"
+  default     = "ghcr.io/suren-4/cloud-routing-simulator-frontend:latest"
 }
 
 variable "desired_count" {

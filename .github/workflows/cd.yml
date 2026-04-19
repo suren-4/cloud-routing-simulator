@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_PREFIX: poorvisara1220/devopssimulation
+  IMAGE_PREFIX: suren-4/cloud-routing-simulator
 
 jobs:
   # --- Build and Push Docker Images ---
