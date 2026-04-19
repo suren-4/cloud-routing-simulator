@@ -8,10 +8,10 @@ output "cloudfront_domain" {
   value       = module.cloudfront.distribution_domain
 }
 
-output "global_accelerator_dns" {
-  description = "Global Accelerator DNS name"
-  value       = module.global_accelerator.accelerator_dns_name
-}
+# output "global_accelerator_dns" {
+#   description = "Global Accelerator DNS name"
+#   value       = module.global_accelerator.accelerator_dns_name
+# }
 
 output "vpc_id" {
   description = "VPC ID"

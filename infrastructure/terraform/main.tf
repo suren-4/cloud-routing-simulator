@@ -52,14 +52,15 @@ module "cloudfront" {
 }
 
 # --- Global Accelerator ---
-module "global_accelerator" {
-  source = "./modules/global-accelerator"
-
-  project_name         = var.project_name
-  alb_arn              = module.alb.alb_arn
-  listener_port_start  = 80
-  listener_port_end    = 80
-}
+# DISABLED: User account lacks subscription required by AWS
+# module "global_accelerator" {
+#   source = "./modules/global-accelerator"
+#
+#   project_name         = var.project_name
+#   alb_arn              = module.alb.alb_arn
+#   listener_port_start  = 80
+#   listener_port_end    = 80
+# }
 
 # --- VPN Secure Access ---
 module "vpn" {
