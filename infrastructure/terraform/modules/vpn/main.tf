@@ -57,6 +57,9 @@ resource "aws_instance" "vpn" {
               export ENDPOINT=$(curl -s http://checkip.amazonaws.com)
               ./openvpn-install.sh
               
+              # The script puts it in /root because cloud-init runs as root. Move it!
+              cp /root/*.ovpn /home/ubuntu/
+              
               # Provide open permissions so the web server can read it
               chmod 777 /home/ubuntu/*.ovpn
               
