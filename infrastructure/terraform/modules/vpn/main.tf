@@ -47,6 +47,7 @@ resource "aws_instance" "vpn" {
   instance_type = "t3.micro"
   subnet_id     = var.subnet_id
   vpc_security_group_ids = [aws_security_group.vpn.id]
+  source_dest_check      = false
 
   user_data = <<-EOF
               #!/bin/bash
